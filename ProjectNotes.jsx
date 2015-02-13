@@ -1,0 +1,389 @@
+﻿(function rg_ProjectNotes(thisObj) {
+	
+	// Globals
+	var pal;
+
+	var language = "en";
+
+	var rg_ProjectNotesData = new Object();
+	rg_ProjectNotesData.scriptName = 'rg: Project Notes';
+	rg_ProjectNotesData.scriptVersion = 'v0.6';
+	rg_ProjectNotesData.scriptTitle = rg_ProjectNotesData.scriptName + ' ' + rg_ProjectNotesData.scriptVersion;
+
+	rg_ProjectNotesData.strRefresh =  {en: 'Refresh', nb: 'Oppdater'};
+	rg_ProjectNotesData.strHelp =  {en: '?', nb: '?'};
+	rg_ProjectNotesData.strDelete = {en: 'Delete', nb: 'Slett'};
+	rg_ProjectNotesData.strRename = {en: 'Rename', nb: 'Endre navn'};
+	rg_ProjectNotesData.strCreateNew = {en: 'Create new', nb: 'Lag ny'};
+	rg_ProjectNotesData.strSaveFile = {en: 'Save As file', nb: 'Lagre som fil'};
+
+	rg_ProjectNotesData.strSaveCurrent = {en: 'Save current note as', nb: 'Lagre dette notatet som'}
+	rg_ProjectNotesData.strSaveNew = {en: 'Save new note as', nb: 'Lagre nytt notat som'}
+
+	rg_ProjectNotesData.strConfirmDel = {en: 'Do you want to delete: ', nb: 'Vil du slette: '}
+
+	rg_ProjectNotesData.strOk = {en: 'OK', nb: 'OK'}
+	rg_ProjectNotesData.strCancel = {en: 'Cancel', nb: 'Avbryt'}
+
+	rg_ProjectNotesData.strDuplicateErr = {
+		en: 'Error: Duplicate \n'+
+		'There is already a note with that name.',
+		nb: 'Feil: duplikat \n' +
+		'Det er allerede et notat med det navnet.'
+	}
+
+	rg_ProjectNotesData.strSecurityErr = {
+		en: 'Error \n' +
+		'You need to check "Allow Scripts to Write Files and Access Network" in your preferences to save your note as a file.',
+		nb: 'Feil \n' +
+		'Du må krysse av "Allow Scripts to Write Files and Access Network" i preferanser for å lagre notat som en file.'
+	}
+
+	rg_ProjectNotes.strHelpText = {
+		en : 'To be written. \n' +
+		'\n' +
+		'Have some feedback or a suggestion? \n' +
+		'Send an email to projectnotes@runegang.so',
+		no: 'Må skrives. \n' +
+		'\n' +
+		'Har du noe tilbakemelding eller et forslag? \n' +
+		'Send en epost til: projectnotes@runegang.so'
+	}
+	
+	function rg_ProjectNotes_localize(strVar) {
+		return strVar[language];
+	}
+
+
+	function rg_ProjectNotes_buildUI(thisObj) {
+		pal = (thisObj instanceof Panel) ? thisObj : new Window('palette', rg_ProjectNotesData.scriptName, undefined, {resizeable: true});
+		
+		if (pal !== null) {
+			// Set up UI elements
+			var res =
+            "group { \
+				orientation: 'column', \
+				alignment: ['fill','fill'], \
+				header: Group { \
+					alignment: ['fill','top'], \
+					alignChildren: ['right', 'top'], \
+					title: StaticText {text:'"+rg_ProjectNotesData.scriptName+"', alignment:['fill','center']}, \
+					refreshButton: Button {text: '"+rg_ProjectNotes_localize(rg_ProjectNotesData.strRefresh)+"'}, \
+					helpButton: Button {text:'"+rg_ProjectNotes_localize(rg_ProjectNotesData.strHelp)+"', maximumSize:[30,30]} \
+				}, \
+				noteArea: EditText { \
+					text:'', \
+					properties:{'multiline':true}, \
+					alignment:['fill','fill'], \
+					preferredSize:[-1,100] \
+				}, \
+				footer: Group { \
+					alignment: ['fill','bottom'], \
+					selectNote: DropDownList {enabled:false, alignment:['fill','bottom'], characters: 40}, \
+					deleteButton: Button {text:'"+rg_ProjectNotes_localize(rg_ProjectNotesData.strDelete)+"', enabled:false, alignment:['right','bottom'] } \
+					renameButton: Button { text:'"+rg_ProjectNotes_localize(rg_ProjectNotesData.strRename)+"', enabled:false, alignment:['right','bottom'] } \
+					createNewButton: Button { text:'"+rg_ProjectNotes_localize(rg_ProjectNotesData.strCreateNew)+"', alignment:['right','bottom'] } \
+					saveButton: Button { text:'"+rg_ProjectNotes_localize(rg_ProjectNotesData.strSaveFile)+"', alignment:['right','bottom'] } \
+				} \
+			}";
+			pal.grp = pal.add(res);
+            
+            // Set up layout
+			pal.layout.layout(true);
+			pal.grp.minimumSize = pal.grp.size;
+			pal.layout.resize();
+			pal.onResizing = pal.onResize = function () {this.layout.resize()}
+
+
+			rg_ProjectNotes_getSaveComp();
+			
+			// Check for save comp when clicking in the window
+			// Remove eventhandler so it only check the first time
+			function onFirstActivate() {
+				rg_ProjectNotes_getSaveComp(true);
+				pal.removeEventListener('focus', onFirstActivate);	
+			}
+			pal.addEventListener('focus', onFirstActivate);
+
+			// Event Handlers
+			pal.grp.header.refreshButton.onClick = function () {rg_ProjectNotes_getSaveComp(true)}
+			pal.grp.header.helpButton.onClick = function () {alert(rg_ProjectNotesData.scriptTitle + '\n' + rg_ProjectNotes_localize(rg_ProjectNotesData.strHelpText))}
+
+			pal.grp.noteArea.onChanging = function () {pal.saveLayer.property('Source Text').setValue(this.text)};
+
+			pal.grp.footer.selectNote.onChange = function () {rg_ProjectNotes_changeNote()}
+			pal.grp.footer.deleteButton.onClick = function () {rg_ProjectNotes_deleteNote()}
+			pal.grp.footer.renameButton.onClick = function () {rg_ProjectNotes_renameNote()}
+			pal.grp.footer.createNewButton.onClick = function () {rg_ProjectNotes_newNote()}
+			pal.grp.footer.saveButton.onClick = function () {rg_ProjectNotes_saveAsFile()}
+
+			// Hitting tab shifts the focus by default
+			// Remove default event and inserts a tab in the noteArea
+			pal.grp.noteArea.addEventListener('keydown', function(event) {
+				if (event.keyName == 'Tab') {
+					event.preventDefault();
+					pal.grp.noteArea.textselection = '\t';
+				}
+			});
+		}
+		return pal;
+	}
+
+
+	// Event Handler Functions
+	function rg_ProjectNotes_getSaveComp (createComp) {
+		// Set deafult
+		if (typeof createComp === 'undefined') createComp = false;
+
+		//createComp true forces the script to create comp in empty projects
+		if (app.project.numItems > 0 || createComp == true) {
+			// Find the saveComp
+			// Loop trough all items and check if it is a comp with the correct name
+
+			var foundSaveComp = false;
+			for (i = 1; i <= app.project.numItems; i++) {
+				if (app.project.item(i).name == 'rg_ProjectNotes' && app.project.item(i) instanceof CompItem) {
+					pal.saveComp = app.project.item(i);
+					foundSaveComp = true;
+					break;
+				}
+			}
+			//  Create Comp if none found
+			if (! foundSaveComp ) {
+				pal.saveComp = app.project.items.addComp('rg_ProjectNotes', 10,10,10,10,10);
+			}
+			
+
+			// Find the saveLayer
+			var foundSaveLayer = false;
+			if (pal.saveComp.numLayers > 0) {
+				// Remove all items in dropdown
+				pal.grp.footer.selectNote.removeAll();
+				
+				// Add all text layers in saveComp to the dropdownlist
+				for (i = 1; i <= pal.saveComp.numLayers; i++) {
+					if (pal.saveComp.layer(i) instanceof TextLayer) {
+						pal.grp.footer.selectNote.add('item', pal.saveComp.layer(i).name);
+						foundSaveLayer = true;
+					}
+				}
+
+				// Set saveLayer to last item of savecomp
+				pal.saveLayer = pal.saveComp.layer(pal.saveComp.numLayers); //set saveLayer to last item of saveComp
+				pal.grp.noteArea.text = pal.saveLayer.property('Source Text').value;
+
+				// Enable the button that require more than one note
+				// Set the dropdownlist to the latest note
+				// Change the text field to the correct note
+				if (pal.grp.footer.selectNote.items.length > 1) {
+					rg_ProjectNotes_multiNotes(true);
+					pal.grp.footer.selectNote.selection = pal.grp.footer.selectNote.length-1;
+					rg_ProjectNotes_changeNote();
+				}
+			}
+
+			// Create the save layer if none is found
+			if (! foundSaveLayer) {
+				pal.saveLayer = pal.saveComp.layers.addText();
+				pal.saveLayer.name = rg_ProjectNotesData.scriptName + ' save';
+				pal.grp.footer.selectNote.add('item', pal.saveLayer.name);
+			}
+		}
+	}
+
+	function rg_ProjectNotes_changeNote() {
+		// Get selected note text from comp and update noteArea
+		pal.saveLayer = pal.saveComp.layer(pal.grp.footer.selectNote.selection.text);
+		pal.grp.noteArea.text = pal.saveLayer.property('Source Text').value;
+	}
+
+	function rg_ProjectNotes_deleteNote () {
+		var currentNote = pal.grp.footer.selectNote.selection;
+		var confirmation = confirm(rg_ProjectNotes_localize(rg_ProjectNotesData.strConfirmDel)+' "'+currentNote.text+'"?', false);
+
+		if (confirmation == true) {
+			
+			if (currentNote.index-1 != -1) {
+				pal.grp.footer.selectNote.selection = currentNote.index-1;
+			}else{
+				pal.grp.footer.selectNote.selection = currentNote.index+1;
+			}
+			rg_ProjectNotes_changeNote();
+			
+			if (pal.grp.footer.selectNote.items.length-1 == 1) {
+				rg_ProjectNotes_multiNotes(false);
+				pal.grp.footer.selectNote.selection = 0;
+			}
+			pal.saveComp.layer(currentNote.text).remove();
+			pal.grp.footer.selectNote.remove(currentNote.index);
+		}
+	}
+
+
+	function rg_ProjectNotes_renameNote(oldName, newName) {
+		// Set default values
+		if (typeof oldName === 'undefined') oldName = pal.grp.footer.selectNote.selection.text;
+		if (typeof newName === 'undefined') newName = rg_ProjectNotes_saveNoteDialog('Rename "'+oldName+'" to');
+
+		// rename in dropdown and comp based on index of layer in comp
+		if (newName != false) {
+			var noteIndex = pal.saveComp.layer(oldName).index;
+			pal.grp.footer.selectNote.items[noteIndex-1].text = newName;
+			pal.saveComp.layer(oldName).name = newName;
+		}
+	}
+
+	function rg_ProjectNotes_newNote () {
+		var selectNote = pal.grp.footer.selectNote;
+
+		var canceled = false;
+
+		// If only one note: change name of the first layer of the save comp.	
+		if (selectNote.items.length === 1) {
+			var saveAs = rg_ProjectNotes_saveNoteDialog(rg_ProjectNotes_localize(rg_ProjectNotesData.strSaveCurrent));
+			
+			if (saveAs != false) {
+				rg_ProjectNotes_renameNote(1, saveAs);
+			}else{
+				canceled = true;
+			}
+		}
+		
+		if (!canceled) {
+			var saveAs = rg_ProjectNotes_saveNoteDialog(rg_ProjectNotes_localize(rg_ProjectNotesData.strSaveNew));
+			
+			if (saveAs != false) {
+				// Add text comp
+				pal.saveLayer = pal.saveComp.layers.addText();
+				pal.saveLayer.name = saveAs;
+				pal.saveLayer.moveToEnd(); // To get the equal indexes in the comp and dropdown
+
+				// Update selectNote
+				selectNote.add('item', saveAs);
+				selectNote.selection = selectNote.items.length-1;
+				rg_ProjectNotes_changeNote();
+
+				// Enable buttons that only function if there is multiple notes
+				// Runs only when creating the second note
+				if (selectNote.items.length == 2) {
+					rg_ProjectNotes_multiNotes(true);
+				}
+			}
+		}
+	}
+
+	function rg_ProjectNotes_saveAsFile() {
+		// Check if script is allowed to write to system; Alert if not.
+		var securitySetting = app.preferences.getPrefAsLong('Main Pref Section', 'Pref_SCRIPTING_FILE_NETWORK_SECURITY');
+		if (securitySetting != 1) {
+			alert(rg_ProjectNotes_localize(rg_ProjectNotesData.strSecurityErr));
+		}
+
+		else {
+			// Open system save dialog
+			var saveFile = File.saveDialog();
+
+			if (saveFile != null) {
+				// Open file in write mode
+				saveFile.open('w');
+
+				// Check if filename ends with .txt. If not: add extension
+				// If no extension: add extension.
+				fileName = saveFile.name.split('.');
+				if (fileName.length == 1 || fileName[fileName.length-1] != 'txt') {
+					saveFile.rename(saveFile.name + '.txt');
+				}
+
+				// write to file
+				saveFile.write(noteArea.text);
+				saveFile.close();
+			}
+		}
+	}
+
+
+	//Extra functions
+	function rg_ProjectNotes_saveNoteDialog (dialogText) {
+		// Set default text
+		if (typeof dialogText === 'undefined') { dialogText = rg_ProjectNotes_localize(rg_ProjectNotesData.strSaveNew); }
+		
+		var savePal = new Window('dialog', 'Save Note')		
+		
+		var res =
+		"group { \
+			orientation: 'column', \
+			alignment: 'left', \
+			alignChildren: 'left', \
+			st: StaticText {text:'"+ dialogText +":'}, \
+			saveAs: EditText {text:'', characters: 30}, \
+			buttons: Group { \
+				orientation: 'row', \
+				alignment: ['center', 'fill'], \
+				cancel: Button {text: '"+rg_ProjectNotes_localize(rg_ProjectNotesData.strCancel)+"', properties: {name: 'Cancel'}}, \
+				ok: Button {text: '"+rg_ProjectNotes_localize(rg_ProjectNotesData.strOk)+"', enabled: false, properties: {name: 'OK'}} \
+			} \
+		}";
+
+		savePal.grp = savePal.add(res)
+
+		savePal.grp.saveAs.onChanging = function() {
+			// Enable OK button if not empty
+			if (this.text.length == 0){
+				savePal.grp.buttons.ok.enabled = false;
+			}else{
+				savePal.grp.buttons.ok.enabled = true;
+			}
+		}
+
+		savePal.grp.buttons.cancel.onClick = function() {
+			// The function will return false to check if the function was canceled
+			saveAsText = false;
+			savePal.close();
+		}
+
+		savePal.grp.buttons.ok.onClick = function() {
+			saveAsText = savePal.grp.saveAs.text;
+
+			// Check if a note has the same name as the input name
+			var duplicate = false;			
+			for (i = 0; i <= pal.grp.footer.selectNote.items.length; i++) {
+				if (pal.grp.footer.selectNote.items[i].text === saveAsText) {
+					duplicate = true;
+					break;
+				}
+			}
+			
+			if (duplicate) {
+				alert(rg_ProjectNotes_localize(rg_ProjectNotesData.strDuplicateErr));
+			}else{
+				savePal.close();
+			}
+		}
+
+		savePal.show();
+		return saveAsText;
+	}
+
+	function rg_ProjectNotes_multiNotes (TrueFalse) {
+		pal.grp.footer.selectNote.enabled = TrueFalse;
+		pal.grp.footer.renameButton.enabled = TrueFalse;
+		pal.grp.footer.deleteButton.enabled = TrueFalse;
+	}
+
+
+	// Show panel
+	rgpnPal = rg_ProjectNotes_buildUI(thisObj);
+
+	if (rgpnPal !== null) {
+
+		if ( rgpnPal instanceof Window ) {
+			
+			// Show the palette
+			rgpnPal.center();
+			rgpnPal.show();
+		}
+		else {
+				rgpnPal.layout.layout(true);
+		}
+	}
+})(this);
