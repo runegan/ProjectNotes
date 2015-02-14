@@ -16,6 +16,8 @@
 					alignment: ['fill','top'], \
 					alignChildren: ['right', 'top'], \
 					title: StaticText {text:'ProjectNotes', alignment:['fill','center']}, \
+					createNewButton: Button { text:'Crete New' }, \
+					saveButton: Button { text:'Save as File', }, \
 					refreshButton: Button {text: 'Refresh'}, \
 					helpButton: Button {text:'?', maximumSize:[30,30]} \
 				}, \
@@ -28,10 +30,8 @@
 				footer: Group { \
 					alignment: ['fill','bottom'], \
 					selectNote: DropDownList {enabled:false, alignment:['fill','bottom'], characters: 40}, \
-					deleteButton: Button {text:'Delete', enabled:false, alignment:['right','bottom'] } \
+					deleteButton: Button {text:'Delete', enabled:false, alignment:['right','bottom'] }, \
 					renameButton: Button { text:'Rename', enabled:false, alignment:['right','bottom'] } \
-					createNewButton: Button { text:'Crete New', alignment:['right','bottom'] } \
-					saveButton: Button { text:'Save as File', alignment:['right','bottom'] } \
 				} \
 			}";
 			pal.grp = pal.add(res);
@@ -54,6 +54,8 @@
 			pal.addEventListener('focus', onFirstActivate);
 
 			// Event Handlers
+			pal.grp.header.createNewButton.onClick = function () {ProjectNotes_newNote()}
+			pal.grp.header.saveButton.onClick = function () {ProjectNotes_saveAsFile()}
 			pal.grp.header.refreshButton.onClick = function () {ProjectNotes_getSaveComp(true)}
 			pal.grp.header.helpButton.onClick = function () {
 				alert("ProjectNotes \n" +
@@ -68,8 +70,6 @@
 			pal.grp.footer.selectNote.onChange = function () {ProjectNotes_changeNote()}
 			pal.grp.footer.deleteButton.onClick = function () {ProjectNotes_deleteNote()}
 			pal.grp.footer.renameButton.onClick = function () {ProjectNotes_renameNote()}
-			pal.grp.footer.createNewButton.onClick = function () {ProjectNotes_newNote()}
-			pal.grp.footer.saveButton.onClick = function () {ProjectNotes_saveAsFile()}
 
 			// Hitting tab shifts the focus by default
 			// Remove default event and inserts a tab in the noteArea
