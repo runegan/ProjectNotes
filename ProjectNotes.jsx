@@ -2,59 +2,7 @@
 	
 	// Globals
 	var pal;
-
-	var language = "en";
-
-	var rg_ProjectNotesData = new Object();
-	rg_ProjectNotesData.scriptName = 'rg: Project Notes';
-	rg_ProjectNotesData.scriptVersion = 'v0.6';
-	rg_ProjectNotesData.scriptTitle = rg_ProjectNotesData.scriptName + ' ' + rg_ProjectNotesData.scriptVersion;
-
-	rg_ProjectNotesData.strRefresh =  {en: 'Refresh', nb: 'Oppdater'};
-	rg_ProjectNotesData.strHelp =  {en: '?', nb: '?'};
-	rg_ProjectNotesData.strDelete = {en: 'Delete', nb: 'Slett'};
-	rg_ProjectNotesData.strRename = {en: 'Rename', nb: 'Endre navn'};
-	rg_ProjectNotesData.strCreateNew = {en: 'Create new', nb: 'Lag ny'};
-	rg_ProjectNotesData.strSaveFile = {en: 'Save As file', nb: 'Lagre som fil'};
-
-	rg_ProjectNotesData.strSaveCurrent = {en: 'Save current note as', nb: 'Lagre dette notatet som'}
-	rg_ProjectNotesData.strSaveNew = {en: 'Save new note as', nb: 'Lagre nytt notat som'}
-
-	rg_ProjectNotesData.strConfirmDel = {en: 'Do you want to delete: ', nb: 'Vil du slette: '}
-
-	rg_ProjectNotesData.strOk = {en: 'OK', nb: 'OK'}
-	rg_ProjectNotesData.strCancel = {en: 'Cancel', nb: 'Avbryt'}
-
-	rg_ProjectNotesData.strDuplicateErr = {
-		en: 'Error: Duplicate \n'+
-		'There is already a note with that name.',
-		nb: 'Feil: duplikat \n' +
-		'Det er allerede et notat med det navnet.'
-	}
-
-	rg_ProjectNotesData.strSecurityErr = {
-		en: 'Error \n' +
-		'You need to check "Allow Scripts to Write Files and Access Network" in your preferences to save your note as a file.',
-		nb: 'Feil \n' +
-		'Du må krysse av "Allow Scripts to Write Files and Access Network" i preferanser for å lagre notat som en file.'
-	}
-
-	rg_ProjectNotes.strHelpText = {
-		en : 'To be written. \n' +
-		'\n' +
-		'Have some feedback or a suggestion? \n' +
-		'Send an email to projectnotes@runegang.so',
-		no: 'Må skrives. \n' +
-		'\n' +
-		'Har du noe tilbakemelding eller et forslag? \n' +
-		'Send en epost til: projectnotes@runegang.so'
-	}
 	
-	function rg_ProjectNotes_localize(strVar) {
-		return strVar[language];
-	}
-
-
 	function rg_ProjectNotes_buildUI(thisObj) {
 		pal = (thisObj instanceof Panel) ? thisObj : new Window('palette', "ProjectNotes", undefined, {resizeable: true});
 		
