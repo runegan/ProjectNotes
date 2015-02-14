@@ -56,7 +56,7 @@
 
 
 	function rg_ProjectNotes_buildUI(thisObj) {
-		pal = (thisObj instanceof Panel) ? thisObj : new Window('palette', rg_ProjectNotesData.scriptName, undefined, {resizeable: true});
+		pal = (thisObj instanceof Panel) ? thisObj : new Window('palette', "ProjectNotes", undefined, {resizeable: true});
 		
 		if (pal !== null) {
 			// Set up UI elements
@@ -67,9 +67,9 @@
 				header: Group { \
 					alignment: ['fill','top'], \
 					alignChildren: ['right', 'top'], \
-					title: StaticText {text:'"+rg_ProjectNotesData.scriptName+"', alignment:['fill','center']}, \
-					refreshButton: Button {text: '"+rg_ProjectNotes_localize(rg_ProjectNotesData.strRefresh)+"'}, \
-					helpButton: Button {text:'"+rg_ProjectNotes_localize(rg_ProjectNotesData.strHelp)+"', maximumSize:[30,30]} \
+					title: StaticText {text:'ProjectNotes', alignment:['fill','center']}, \
+					refreshButton: Button {text: 'Refresh'}, \
+					helpButton: Button {text:'?', maximumSize:[30,30]} \
 				}, \
 				noteArea: EditText { \
 					text:'', \
@@ -80,10 +80,10 @@
 				footer: Group { \
 					alignment: ['fill','bottom'], \
 					selectNote: DropDownList {enabled:false, alignment:['fill','bottom'], characters: 40}, \
-					deleteButton: Button {text:'"+rg_ProjectNotes_localize(rg_ProjectNotesData.strDelete)+"', enabled:false, alignment:['right','bottom'] } \
-					renameButton: Button { text:'"+rg_ProjectNotes_localize(rg_ProjectNotesData.strRename)+"', enabled:false, alignment:['right','bottom'] } \
-					createNewButton: Button { text:'"+rg_ProjectNotes_localize(rg_ProjectNotesData.strCreateNew)+"', alignment:['right','bottom'] } \
-					saveButton: Button { text:'"+rg_ProjectNotes_localize(rg_ProjectNotesData.strSaveFile)+"', alignment:['right','bottom'] } \
+					deleteButton: Button {text:'Delete', enabled:false, alignment:['right','bottom'] } \
+					renameButton: Button { text:'Rename', enabled:false, alignment:['right','bottom'] } \
+					createNewButton: Button { text:'Crete New', alignment:['right','bottom'] } \
+					saveButton: Button { text:'Save as File', alignment:['right','bottom'] } \
 				} \
 			}";
 			pal.grp = pal.add(res);
@@ -100,14 +100,20 @@
 			// Check for save comp when clicking in the window
 			// Remove eventhandler so it only check the first time
 			function onFirstActivate() {
-				rg_ProjectNotes_getSaveComp(true);
+				ProjectNotes_getSaveComp(true);
 				pal.removeEventListener('focus', onFirstActivate);	
 			}
 			pal.addEventListener('focus', onFirstActivate);
 
 			// Event Handlers
 			pal.grp.header.refreshButton.onClick = function () {rg_ProjectNotes_getSaveComp(true)}
-			pal.grp.header.helpButton.onClick = function () {alert(rg_ProjectNotesData.scriptTitle + '\n' + rg_ProjectNotes_localize(rg_ProjectNotesData.strHelpText))}
+			pal.grp.header.helpButton.onClick = function () {
+				alert("ProjectNotes \n" +
+					"To be written. \n" +
+					"\n" +
+					"Have some feedback or a suggestion? \n" +
+					"Send an email to projectnotes@runegang.so");
+			}
 
 			pal.grp.noteArea.onChanging = function () {pal.saveLayer.property('Source Text').setValue(this.text)};
 
@@ -142,7 +148,7 @@
 
 			var foundSaveComp = false;
 			for (i = 1; i <= app.project.numItems; i++) {
-				if (app.project.item(i).name == 'rg_ProjectNotes' && app.project.item(i) instanceof CompItem) {
+				if (app.project.item(i).name == "rg_ProjectNotes" && app.project.item(i) instanceof CompItem) {
 					pal.saveComp = app.project.item(i);
 					foundSaveComp = true;
 					break;
@@ -150,7 +156,7 @@
 			}
 			//  Create Comp if none found
 			if (! foundSaveComp ) {
-				pal.saveComp = app.project.items.addComp('rg_ProjectNotes', 10,10,10,10,10);
+				pal.saveComp = app.project.items.addComp("rg_ProjectNotes", 10,10,10,10,10);
 			}
 			
 
@@ -169,7 +175,7 @@
 				}
 
 				// Set saveLayer to last item of savecomp
-				pal.saveLayer = pal.saveComp.layer(pal.saveComp.numLayers); //set saveLayer to last item of saveComp
+				pal.saveLayer = pal.saveComp.layer(pal.saveComp.numLayers);
 				pal.grp.noteArea.text = pal.saveLayer.property('Source Text').value;
 
 				// Enable the button that require more than one note
@@ -185,7 +191,7 @@
 			// Create the save layer if none is found
 			if (! foundSaveLayer) {
 				pal.saveLayer = pal.saveComp.layers.addText();
-				pal.saveLayer.name = rg_ProjectNotesData.scriptName + ' save';
+				pal.saveLayer.name = ProjectNotesData.scriptName + ' save';
 				pal.grp.footer.selectNote.add('item', pal.saveLayer.name);
 			}
 		}
@@ -199,7 +205,7 @@
 
 	function rg_ProjectNotes_deleteNote () {
 		var currentNote = pal.grp.footer.selectNote.selection;
-		var confirmation = confirm(rg_ProjectNotes_localize(rg_ProjectNotesData.strConfirmDel)+' "'+currentNote.text+'"?', false);
+		var confirmation = confirm('Do you want to delete: "'+currentNote.text+'"?', false);
 
 		if (confirmation == true) {
 			
@@ -240,7 +246,7 @@
 
 		// If only one note: change name of the first layer of the save comp.	
 		if (selectNote.items.length === 1) {
-			var saveAs = rg_ProjectNotes_saveNoteDialog(rg_ProjectNotes_localize(rg_ProjectNotesData.strSaveCurrent));
+			var saveAs = rg_ProjectNotes_saveNoteDialog('Save current Note as:');
 			
 			if (saveAs != false) {
 				rg_ProjectNotes_renameNote(1, saveAs);
@@ -250,7 +256,7 @@
 		}
 		
 		if (!canceled) {
-			var saveAs = rg_ProjectNotes_saveNoteDialog(rg_ProjectNotes_localize(rg_ProjectNotesData.strSaveNew));
+			var saveAs = rg_ProjectNotes_saveNoteDialog('Save new Note as:');
 			
 			if (saveAs != false) {
 				// Add text comp
@@ -276,7 +282,7 @@
 		// Check if script is allowed to write to system; Alert if not.
 		var securitySetting = app.preferences.getPrefAsLong('Main Pref Section', 'Pref_SCRIPTING_FILE_NETWORK_SECURITY');
 		if (securitySetting != 1) {
-			alert(rg_ProjectNotes_localize(rg_ProjectNotesData.strSecurityErr));
+			alert('You need to check "Allow Scripts to Write Files and Access Network" in your preferences to save your note as a file.');
 		}
 
 		else {
@@ -305,7 +311,7 @@
 	//Extra functions
 	function rg_ProjectNotes_saveNoteDialog (dialogText) {
 		// Set default text
-		if (typeof dialogText === 'undefined') { dialogText = rg_ProjectNotes_localize(rg_ProjectNotesData.strSaveNew); }
+		if (typeof dialogText === 'undefined') { dialogText = 'Save new Note as:'; }
 		
 		var savePal = new Window('dialog', 'Save Note')		
 		
@@ -319,8 +325,8 @@
 			buttons: Group { \
 				orientation: 'row', \
 				alignment: ['center', 'fill'], \
-				cancel: Button {text: '"+rg_ProjectNotes_localize(rg_ProjectNotesData.strCancel)+"', properties: {name: 'Cancel'}}, \
-				ok: Button {text: '"+rg_ProjectNotes_localize(rg_ProjectNotesData.strOk)+"', enabled: false, properties: {name: 'OK'}} \
+				cancel: Button {text: 'Cancel', properties: {name: 'Cancel'}}, \
+				ok: Button {text: 'OK', enabled: false, properties: {name: 'OK'}} \
 			} \
 		}";
 
@@ -354,7 +360,7 @@
 			}
 			
 			if (duplicate) {
-				alert(rg_ProjectNotes_localize(rg_ProjectNotesData.strDuplicateErr));
+				alert('There is already a note with that name.');
 			}else{
 				savePal.close();
 			}
