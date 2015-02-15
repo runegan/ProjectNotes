@@ -13,11 +13,12 @@
 				orientation: 'column', \
 				alignment: ['fill','fill'], \
 				header: Group { \
+					spacing: 5, \
 					alignment: ['fill','top'], \
 					alignChildren: ['right', 'top'], \
-					title: StaticText {text:'ProjectNotes', alignment:['fill','center']}, \
+					title: StaticText {text:'ProjectNotes', alignment:['fill','center'], size: [150, 30]}, \
 					createNewButton: Button { text:'Crete New' }, \
-					saveButton: Button { text:'Save as File', }, \
+					saveButton: Button {text:'Save as File'}, \
 					refreshButton: Button {text: 'Refresh'}, \
 					helpButton: Button {text:'?', maximumSize:[30,30]} \
 				}, \
@@ -29,7 +30,10 @@
 				}, \
 				footer: Group { \
 					alignment: ['fill','bottom'], \
-					selectNote: DropDownList {enabled:false, alignment:['fill','bottom'], characters: 40}, \
+					spacing: 5, \
+					selectNote: DropDownList { \
+						enabled:false, alignment:['fill','bottom'],\
+						characters: 40, minimumSize:[-1, 26]}, \
 					deleteButton: Button {text:'Delete', enabled:false, alignment:['right','bottom'] }, \
 					renameButton: Button { text:'Rename', enabled:false, alignment:['right','bottom'] } \
 				} \
@@ -38,7 +42,6 @@
             
             // Set up layout
 			pal.layout.layout(true);
-			pal.grp.minimumSize = pal.grp.size;
 			pal.layout.resize();
 			pal.onResizing = pal.onResize = function () {this.layout.resize()}
 
