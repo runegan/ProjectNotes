@@ -191,7 +191,6 @@
 	}
 
 	function ProjectNotes_newNote () {
-		alert('one');
 		var selectNote = pal.grp.footer.selectNote;
 
 		var canceled = false;
