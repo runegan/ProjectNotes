@@ -105,7 +105,7 @@
       }
       //  Create Comp if none found
       if (! foundSaveComp ) {
-        pal.saveComp = app.project.items.addComp("ProjectNotes", 10,10,10,10,10);
+        pal.saveComp = app.project.items.addComp("ProjectNotes", 500,700,1,1,25);
       }
 
 
