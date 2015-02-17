@@ -2,6 +2,7 @@
 
   // Globals
   var pal;
+  var iconPath = 'icons/';
 
   function projectNotes_buildUI(thisObj) {
     pal = (thisObj instanceof Panel) ? thisObj : new Window('palette', "ProjectNotes", undefined, {resizeable: true});
@@ -12,14 +13,14 @@
         orientation: 'column', \
         alignment: ['fill','fill'], \
         header: Group { \
-          spacing: 5, \
+          spacing: 0, \
           alignment: ['fill','top'], \
           alignChildren: ['right', 'top'], \
           title: StaticText {text:'ProjectNotes', alignment:['fill','center'], size: [150, 30]}, \
-          createNewButton: Button { text:'Crete New' }, \
-          saveButton: Button {text:'Save as File'}, \
-          refreshButton: Button {text: 'Refresh'}, \
-          helpButton: Button {text:'?', maximumSize:[30,30]} \
+          createNewButton: IconButton { text:'Crete New', image:'icons/btn_createNew.png', minimumSize:[30,25], properties: {style: 'toolbutton'} }, \
+          saveButton: IconButton {text:'Save as File', image:'icons/btn_saveFile.png', minimumSize:[30,25], properties: {style: 'toolbutton'}}, \
+          refreshButton: IconButton {text: 'Refresh', image:'icons/btn_refresh.png', minimumSize:[30,25], properties: {style: 'toolbutton'}}, \
+          helpButton: IconButton {text:'i', image:'icons/btn_info.png', minimumSize:[30,25], properties: {style: 'toolbutton'}} \
         }, \
         noteArea: EditText { \
           text:'', \
@@ -29,12 +30,12 @@
         }, \
         footer: Group { \
           alignment: ['fill','bottom'], \
-          spacing: 5, \
+          spacing: 2, \
           selectNote: DropDownList { \
             enabled:false, alignment:['fill','bottom'],\
             characters: 40, minimumSize:[-1, 26]}, \
-          deleteButton: Button {text:'Delete', enabled:false, alignment:['right','bottom'] }, \
-          renameButton: Button { text:'Rename', enabled:false, alignment:['right','bottom'] } \
+          renameButton: IconButton { text:'Rename', enabled:false, alignment:['right','bottom'], image:'icons/btn_rename.png', minimumSize:[30,25], properties: {style: 'toolbutton'}}, \
+          deleteButton: IconButton {text:'Delete', enabled:false, alignment:['right','bottom'], image:'icons/btn_delete.png', minimumSize:[30,25], properties: {style: 'toolbutton'}} \
         } \
       }";
       pal.grp = pal.add(res);
