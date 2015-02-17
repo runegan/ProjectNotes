@@ -1,8 +1,8 @@
 ﻿(function ProjectNotes(thisObj) {
 
   // Globals
+  var scriptVersion = '0.7.2'
   var pal;
-  var iconPath = 'icons/';
 
   function projectNotes_buildUI(thisObj) {
     pal = (thisObj instanceof Panel) ? thisObj : new Window('palette', "ProjectNotes", undefined, {resizeable: true});
@@ -61,6 +61,8 @@
       pal.grp.header.refreshButton.onClick = function () {projectNotes_getSaveComp(true)}
       pal.grp.header.helpButton.onClick = function () {
         alert("ProjectNotes \n" +
+          "Version " + scriptVersion +"\n" +
+          "\n" +
           "To be written. \n" +
           "\n" +
           "Have some feedback or a suggestion? \n" +
