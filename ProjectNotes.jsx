@@ -41,6 +41,7 @@
 
       // Set up layout
       pal.layout.layout(true);
+      pal.size = [500, 500];
       pal.layout.resize();
       pal.onResizing = pal.onResize = function () {this.layout.resize(); }
 
