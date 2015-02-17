@@ -16,7 +16,6 @@
           spacing: 0, \
           alignment: ['fill','top'], \
           alignChildren: ['right', 'top'], \
-          title: StaticText {text:'ProjectNotes', alignment:['fill','center'], size: [150, 30]}, \
           createNewButton: IconButton { text:'Crete New', image:'icons/btn_createNew.png', minimumSize:[30,25], properties: {style: 'toolbutton'} }, \
           saveButton: IconButton {text:'Save as File', image:'icons/btn_saveFile.png', minimumSize:[30,25], properties: {style: 'toolbutton'}}, \
           refreshButton: IconButton {text: 'Refresh', image:'icons/btn_refresh.png', minimumSize:[30,25], properties: {style: 'toolbutton'}}, \
