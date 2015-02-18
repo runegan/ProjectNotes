@@ -1,7 +1,29 @@
-﻿(function ProjectNotes(thisObj) {
+﻿/*
+ProjectNotes - Create notes for your After Effect projects
+Copyright (C) 2015  Rune Gangsø
+
+  ProjectNotes is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  ProjectNotes is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+---
+Icons made by Freepik from <http://www.flaticon.com> is licensed
+under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
+*/
+
+(function ProjectNotes(thisObj) {
 
   // Globals
-  var scriptVersion = '0.8'
+  var scriptVersion = "0.8";
   var pal;
 
   function projectNotes_buildUI(thisObj) {
@@ -71,6 +93,7 @@
         alert("ProjectNotes \n" +
           "Version " + scriptVersion +"\n" +
           "\n" +
+          "Copyright (C) 2015  Rune Gangsø"
           "To be written. \n" +
           "\n" +
           "Have some feedback or a suggestion? \n" +
