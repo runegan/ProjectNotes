@@ -1,6 +1,8 @@
 ﻿/*
 ProjectNotes - Create notes for your After Effect projects
+http://github.com/runegan/ProjectNotes/
 Copyright (C) 2015  Rune Gangsø
+http://runegang.so
 
   ProjectNotes is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -97,10 +99,17 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
         alert("ProjectNotes \n" +
           "Version " + scriptVersion +"\n" +
           "Copyright (c) 2015  Rune Gangsø\n" +
-          "Description: To be written.\n" +
+          "A panel for writing down notes or todos for the current project. "+
+          "The script will create a comp where the notes are stored.\n" +
+          "\n" +
+          "Features:\n" +
+          "- Multiple notes.\n" +
+          "- Exporting notes to disk.\n" +
+          "- Renaming and deleting notes.\n" +
           "\n" +
           "Have some feedback or a suggestion?\n" +
           "Send an email to projectnotes@runegang.so\n" +
+          "or send \n" +
           "\n" +
           "\n" +
           "Legal:\n" +
