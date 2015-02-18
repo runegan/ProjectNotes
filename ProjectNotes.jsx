@@ -1,7 +1,7 @@
 ﻿(function ProjectNotes(thisObj) {
 
   // Globals
-  var scriptVersion = '0.7.2'
+  var scriptVersion = '0.8'
   var pal;
 
   function projectNotes_buildUI(thisObj) {
@@ -9,35 +9,37 @@
 
     if (pal !== null) {
       // Set up UI elements
-      var res = "group { \
-        orientation: 'column', \
-        alignment: ['fill','fill'], \
-        header: Group { \
-          spacing: 0, \
-          alignment: ['fill','top'], \
-          alignChildren: ['right', 'top'], \
-          createNewButton: IconButton { text:'Crete New', image:'icons/btn_createNew.png', minimumSize:[30,25], properties: {style: 'toolbutton'} }, \
-          saveButton: IconButton {text:'Save as File', image:'icons/btn_saveFile.png', minimumSize:[30,25], properties: {style: 'toolbutton'}}, \
-          refreshButton: IconButton {text: 'Refresh', image:'icons/btn_refresh.png', minimumSize:[30,25], properties: {style: 'toolbutton'}}, \
-          helpButton: IconButton {text:'i', image:'icons/btn_info.png', minimumSize:[30,25], properties: {style: 'toolbutton'}} \
-        }, \
-        noteArea: EditText { \
-          text:'', \
-          properties:{'multiline':true}, \
-          alignment:['fill','fill'], \
-          minimumSize:[-1,100] \
-        }, \
-        footer: Group { \
-          alignment: ['fill','bottom'], \
-          spacing: 2, \
-          selectNote: DropDownList { \
-            enabled:false, alignment:['fill','bottom'],\
-            characters: 40, minimumSize:[-1, 26]}, \
-          renameButton: IconButton { text:'Rename', enabled:false, alignment:['right','bottom'], image:'icons/btn_rename.png', minimumSize:[30,25], properties: {style: 'toolbutton'}}, \
-          deleteButton: IconButton {text:'Delete', enabled:false, alignment:['right','bottom'], image:'icons/btn_delete.png', minimumSize:[30,25], properties: {style: 'toolbutton'}} \
-        } \
-      }";
-      pal.grp = pal.add(res);
+      pal.grp = pal.add('group');
+        pal.grp.orientation = 'column';
+        pal.grp.alignment = ['fill', 'fill'];
+       
+        pal.header = pal.grp.add('group');
+          pal.header.alignment = ['fill', 'top'];
+          pal.header.alignChildren = ['right', 'top'];
+          pal.header.spacing = 0;
+        
+          pal.btn_createNew = pal.header.add('IconButton', [0,0,25,25], 'icons/btn_createNew.png', {style: 'toolbutton'});
+          pal.btn_save = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_saveFile.png', {style: 'toolbutton'});
+          pal.btn_refresh = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_refresh.png', {style: 'toolbutton'});
+          pal.btn_info = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_info.png', {style: 'toolbutton'});
+
+        pal.noteArea = pal.grp.add('edittext', undefined, undefined, {multiline:true});
+          pal.noteArea.alignment = ['fill', 'fill'];
+          pal.noteArea.minimumSize = [-1, 100];
+
+        pal.footer = pal.grp.add('group');
+          pal.footer.alignment = ['fill', 'bottom'];
+          pal.footer.alignChildren = ['right', 'bottom'];
+          pal.footer.spacing = 2;
+
+          pal.selectNote = pal.footer.add('dropdownlist', undefined);
+            pal.selectNote.alignment = ['fill', 'fill'];
+            pal.selectNote.enabled = false;
+
+          pal.btn_rename = pal.footer.add('iconbutton', [0,0,25,25], 'icons/btn_rename.png', {style: 'toolbutton'});
+            pal.btn_rename.enabled = false;
+          pal.btn_delete = pal.footer.add('iconbutton', [0,0,25,25], 'icons/btn_delete.png', {style: 'toolbutton'});
+            pal.btn_delete.enabled = false;
 
       // Set up layout
       pal.layout.layout(true);
@@ -56,10 +58,10 @@
       pal.addEventListener('focus', onFirstActivate);
 
       // Event Handlers
-      pal.grp.header.createNewButton.onClick = function () {projectNotes_newNote()}
-      pal.grp.header.saveButton.onClick = function () {projectNotes_saveAsFile()}
-      pal.grp.header.refreshButton.onClick = function () {projectNotes_getSaveComp(true)}
-      pal.grp.header.helpButton.onClick = function () {
+      pal.btn_createNew.onClick = function () {projectNotes_newNote()}
+      pal.btn_save.onClick = function () {projectNotes_saveAsFile()}
+      pal.btn_refresh.onClick = function () {projectNotes_getSaveComp(true)}
+      pal.btn_info.onClick = function () {
         alert("ProjectNotes \n" +
           "Version " + scriptVersion +"\n" +
           "\n" +
@@ -69,18 +71,18 @@
           "Send an email to projectnotes@runegang.so");
       }
 
-      pal.grp.noteArea.onChanging = function () {pal.saveLayer.property('Source Text').setValue(this.text)};
+      pal.noteArea.onChanging = function () {pal.saveLayer.property('Source Text').setValue(this.text)};
 
-      pal.grp.footer.selectNote.onChange = function () {projectNotes_changeNote()}
-      pal.grp.footer.deleteButton.onClick = function () {projectNotes_deleteNote()}
-      pal.grp.footer.renameButton.onClick = function () {projectNotes_renameNote()}
+      pal.selectNote.onChange = function () {projectNotes_changeNote()}
+      pal.btn_delete.onClick = function () {projectNotes_deleteNote()}
+      pal.btn_rename.onClick = function () {projectNotes_renameNote()}
 
       // Hitting tab shifts the focus by default
       // Remove default event and inserts a tab in the noteArea
-      pal.grp.noteArea.addEventListener('keydown', function(event) {
+      pal.noteArea.addEventListener('keydown', function(event) {
         if (event.keyName == 'Tab') {
           event.preventDefault();
-          pal.grp.noteArea.textselection = '\t';
+          pal.noteArea.textselection = '\t';
         }
       });
     }
@@ -116,26 +118,26 @@
       var foundSaveLayer = false;
       if (pal.saveComp.numLayers > 0) {
         // Remove all items in dropdown
-        pal.grp.footer.selectNote.removeAll();
+        pal.selectNote.removeAll();
         
         // Add all text layers in saveComp to the dropdownlist
         for (i = 1; i <= pal.saveComp.numLayers; i++) {
           if (pal.saveComp.layer(i) instanceof TextLayer) {
-            pal.grp.footer.selectNote.add('item', pal.saveComp.layer(i).name);
+            pal.selectNote.add('item', pal.saveComp.layer(i).name);
             foundSaveLayer = true;
           }
         }
 
         // Set saveLayer to last item of savecomp
         pal.saveLayer = pal.saveComp.layer(pal.saveComp.numLayers);
-        pal.grp.noteArea.text = pal.saveLayer.property('Source Text').value;
+        pal.noteArea.text = pal.saveLayer.property('Source Text').value;
 
         // Enable the button that require more than one note
         // Set the dropdownlist to the latest note
         // Change the text field to the correct note
-        if (pal.grp.footer.selectNote.items.length > 1) {
+        if (pal.selectNote.items.length > 1) {
           projectNotes_multiNotes(true);
-          pal.grp.footer.selectNote.selection = pal.grp.footer.selectNote.length-1;
+          pal.selectNote.selection = pal.selectNote.length-1;
           projectNotes_changeNote();
         }
       }
@@ -144,55 +146,55 @@
       if (! foundSaveLayer) {
         pal.saveLayer = pal.saveComp.layers.addText();
         pal.saveLayer.name = 'ProjectNotes save';
-        pal.grp.footer.selectNote.add('item', pal.saveLayer.name);
+        pal.selectNote.add('item', pal.saveLayer.name);
       }
     }
   }
 
   function projectNotes_changeNote() {
     // Get selected note text from comp and update noteArea
-    pal.saveLayer = pal.saveComp.layer(pal.grp.footer.selectNote.selection.text);
-    pal.grp.noteArea.text = pal.saveLayer.property('Source Text').value;
+    pal.saveLayer = pal.saveComp.layer(pal.selectNote.selection.text);
+    pal.noteArea.text = pal.saveLayer.property('Source Text').value;
   }
 
   function projectNotes_deleteNote () {
-    var currentNote = pal.grp.footer.selectNote.selection;
+    var currentNote = pal.selectNote.selection;
     var confirmation = confirm('Do you want to delete: "'+currentNote.text+'"?', false);
 
     if (confirmation == true) {
 
       if (currentNote.index-1 != -1) {
-        pal.grp.footer.selectNote.selection = currentNote.index-1;
+        pal.selectNote.selection = currentNote.index-1;
       }else{
-        pal.grp.footer.selectNote.selection = currentNote.index+1;
+        pal.selectNote.selection = currentNote.index+1;
       }
       projectNotes_changeNote();
 
-      if (pal.grp.footer.selectNote.items.length-1 == 1) {
+      if (pal.selectNote.items.length-1 == 1) {
         projectNotes_multiNotes(false);
-        pal.grp.footer.selectNote.selection = 0;
+        pal.selectNote.selection = 0;
       }
       pal.saveComp.layer(currentNote.text).remove();
-      pal.grp.footer.selectNote.remove(currentNote.index);
+      pal.selectNote.remove(currentNote.index);
     }
   }
 
 
   function projectNotes_renameNote(oldName, newName) {
     // Set default values
-    if (typeof oldName === 'undefined') oldName = pal.grp.footer.selectNote.selection.text;
+    if (typeof oldName === 'undefined') oldName = pal.selectNote.selection.text;
     if (typeof newName === 'undefined') newName = projectNotes_saveNoteDialog('Rename "'+oldName+'" to');
 
     // rename in dropdown and comp based on index of layer in comp
     if (newName != false) {
       var noteIndex = pal.saveComp.layer(oldName).index;
-      pal.grp.footer.selectNote.items[noteIndex-1].text = newName;
+      pal.selectNote.items[noteIndex-1].text = newName;
       pal.saveComp.layer(oldName).name = newName;
     }
   }
 
   function projectNotes_newNote () {
-    var selectNote = pal.grp.footer.selectNote;
+    var selectNote = pal.selectNote;
 
     var canceled = false;
 
@@ -304,8 +306,8 @@
 
       // Check if a note has the same name as the input name
       var duplicate = false;          
-      for (i = 0; i <= pal.grp.footer.selectNote.items.length; i++) {
-        if (pal.grp.footer.selectNote.items[i].text === saveAsText) {
+      for (i = 0; i <= pal.selectNote.items.length; i++) {
+        if (pal.selectNote.items[i].text === saveAsText) {
           duplicate = true;
           break;
         }
@@ -323,9 +325,9 @@
   }
 
   function projectNotes_multiNotes (TrueFalse) {
-    pal.grp.footer.selectNote.enabled = TrueFalse;
-    pal.grp.footer.renameButton.enabled = TrueFalse;
-    pal.grp.footer.deleteButton.enabled = TrueFalse;
+    pal.selectNote.enabled = TrueFalse;
+    pal.btn_rename.enabled = TrueFalse;
+    pal.btn_delete.enabled = TrueFalse;
   }
 
 
