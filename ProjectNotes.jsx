@@ -19,13 +19,13 @@
           pal.header.spacing = 0;
         
           pal.btn_createNew = pal.header.add('IconButton', [0,0,25,25], 'icons/btn_createNew.png', {style: 'toolbutton'});
-            pal.btn_createNew.helpTip = 'Create a new Note';
+            pal.btn_createNew.helpTip = "Create a new Note";
           pal.btn_save = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_saveFile.png', {style: 'toolbutton'});
-            pal.btn_save.helpTip = 'Save current note as a file';
+            pal.btn_save.helpTip = "Save current note as a file";
           pal.btn_refresh = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_refresh.png', {style: 'toolbutton'});
-            pal.btn_refresh.helpTip = 'Reload notes';
+            pal.btn_refresh.helpTip = "Reload notes";
           pal.btn_info = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_info.png', {style: 'toolbutton'});
-            pal.btn_info.helpTip = 'Information about the panel';
+            pal.btn_info.helpTip = "Information about the panel";
 
         pal.noteArea = pal.grp.add('edittext', undefined, undefined, {multiline:true});
           pal.noteArea.alignment = ['fill', 'fill'];
@@ -41,10 +41,10 @@
             pal.selectNote.enabled = false;
 
           pal.btn_rename = pal.footer.add('iconbutton', [0,0,25,25], 'icons/btn_rename.png', {style: 'toolbutton'});
-            pal.btn_rename.helpTip = 'Rename the current note';
+            pal.btn_rename.helpTip = "Rename the current note";
             pal.btn_rename.enabled = false;
           pal.btn_delete = pal.footer.add('iconbutton', [0,0,25,25], 'icons/btn_delete.png', {style: 'toolbutton'});
-            pal.btn_delete.helpTip = 'Delete the current note';
+            pal.btn_delete.helpTip = "Delete the current note";
             pal.btn_delete.enabled = false;
 
       // Set up layout
@@ -151,7 +151,7 @@
       // Create the save layer if none is found
       if (! foundSaveLayer) {
         pal.saveLayer = pal.saveComp.layers.addText();
-        pal.saveLayer.name = 'ProjectNotes save';
+        pal.saveLayer.name = "ProjectNotes save";
         pal.selectNote.add('item', pal.saveLayer.name);
       }
     }
@@ -206,7 +206,7 @@
 
     // If only one note: change name of the first layer of the save comp.   
     if (selectNote.items.length === 1) {
-      var saveAs = projectNotes_saveNoteDialog('Save current Note as:');
+      var saveAs = projectNotes_saveNoteDialog("Save current Note as:");
       
       if (saveAs != false) {
         projectNotes_renameNote(1, saveAs);
@@ -216,7 +216,7 @@
     }
 
     if (!canceled) {
-      var saveAs = projectNotes_saveNoteDialog('Save new Note as:');
+      var saveAs = projectNotes_saveNoteDialog("Save new Note as:");
 
       if (saveAs != false) {
         // Add text comp
@@ -271,7 +271,7 @@
   //Extra functions
   function projectNotes_saveNoteDialog (dialogText) {
     // Set default text
-    if (typeof dialogText === 'undefined') { dialogText = 'Save new Note as:'; }
+    if (typeof dialogText === 'undefined') { dialogText = "Save new Note as:"; }
 
     var savePal = new Window('dialog', 'Save Note')     
 
@@ -320,7 +320,7 @@
       }
 
       if (duplicate) {
-        alert('There is already a note with that name.');
+        alert("There is already a note with that name.");
       }else{
         savePal.close();
       }
