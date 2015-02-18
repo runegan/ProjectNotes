@@ -35,11 +35,13 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
         pal.grp.orientation = 'column';
         pal.grp.alignment = ['fill', 'fill'];
        
+       // Create Header
         pal.header = pal.grp.add('group');
           pal.header.alignment = ['fill', 'top'];
           pal.header.alignChildren = ['right', 'top'];
           pal.header.spacing = 0;
         
+          // Create buttons
           pal.btn_createNew = pal.header.add('IconButton', [0,0,25,25], 'icons/btn_createNew.png', {style: 'toolbutton'});
             pal.btn_createNew.helpTip = "Create a new Note";
           pal.btn_save = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_saveFile.png', {style: 'toolbutton'});
@@ -49,10 +51,12 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
           pal.btn_info = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_info.png', {style: 'toolbutton'});
             pal.btn_info.helpTip = "Information about the panel";
 
+        // Create noteArea
         pal.noteArea = pal.grp.add('edittext', undefined, undefined, {multiline:true});
           pal.noteArea.alignment = ['fill', 'fill'];
           pal.noteArea.minimumSize = [-1, 100];
 
+        // Create Footer
         pal.footer = pal.grp.add('group');
           pal.footer.alignment = ['fill', 'bottom'];
           pal.footer.alignChildren = ['right', 'bottom'];
@@ -92,8 +96,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
       pal.btn_info.onClick = function () {
         alert("ProjectNotes \n" +
           "Version " + scriptVersion +"\n" +
-          "\n" +
-          "Copyright (C) 2015  Rune Gangsø\n" +
+          "Copyright (c) 2015  Rune Gangsø\n" +
           "Description: To be written.\n" +
           "\n" +
           "Have some feedback or a suggestion?\n" +
