@@ -19,9 +19,13 @@
           pal.header.spacing = 0;
         
           pal.btn_createNew = pal.header.add('IconButton', [0,0,25,25], 'icons/btn_createNew.png', {style: 'toolbutton'});
+            pal.btn_createNew.helpTip = 'Create a new Note';
           pal.btn_save = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_saveFile.png', {style: 'toolbutton'});
+            pal.btn_save.helpTip = 'Save current note as a file';
           pal.btn_refresh = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_refresh.png', {style: 'toolbutton'});
+            pal.btn_refresh.helpTip = 'Reload notes';
           pal.btn_info = pal.header.add('iconbutton', [0,0,25,25], 'icons/btn_info.png', {style: 'toolbutton'});
+            pal.btn_info.helpTip = 'Information about the panel';
 
         pal.noteArea = pal.grp.add('edittext', undefined, undefined, {multiline:true});
           pal.noteArea.alignment = ['fill', 'fill'];
@@ -37,8 +41,10 @@
             pal.selectNote.enabled = false;
 
           pal.btn_rename = pal.footer.add('iconbutton', [0,0,25,25], 'icons/btn_rename.png', {style: 'toolbutton'});
+            pal.btn_rename.helpTip = 'Rename the current note';
             pal.btn_rename.enabled = false;
           pal.btn_delete = pal.footer.add('iconbutton', [0,0,25,25], 'icons/btn_delete.png', {style: 'toolbutton'});
+            pal.btn_delete.helpTip = 'Delete the current note';
             pal.btn_delete.enabled = false;
 
       // Set up layout
