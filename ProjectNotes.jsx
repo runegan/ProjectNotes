@@ -93,11 +93,29 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
         alert("ProjectNotes \n" +
           "Version " + scriptVersion +"\n" +
           "\n" +
-          "Copyright (C) 2015  Rune Gangsø"
-          "To be written. \n" +
+          "Copyright (C) 2015  Rune Gangsø\n" +
+          "Description: To be written.\n" +
           "\n" +
-          "Have some feedback or a suggestion? \n" +
-          "Send an email to projectnotes@runegang.so");
+          "Have some feedback or a suggestion?\n" +
+          "Send an email to projectnotes@runegang.so\n" +
+          "\n" +
+          "\n" +
+          "Legal:\n" +
+          "ProjectNotes is free software: you can redistribute it and/or modify " +
+          "it under the terms of the GNU General Public License as published by " +
+          "the Free Software Foundation, either version 3 of the License, or " +
+          "(at your option) any later version.\n" +
+          "\n" +
+          "ProjectNotes is distributed in the hope that it will be useful, " +
+          "but WITHOUT ANY WARRANTY; without even the implied warranty of " +
+          "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " +
+          "GNU General Public License for more details.\n" +
+          "\n" +
+          "You should have received a copy of the GNU General Public License " +
+          "along with this program.  If not, see http://www.gnu.org/licenses/.\n" +
+          "\n" +
+          "Icons made by Freepik from http://www.flaticon.com is licensed " +
+          "under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/");
       }
 
       pal.noteArea.onChanging = function () {pal.saveLayer.property('Source Text').setValue(this.text)};
