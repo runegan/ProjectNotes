@@ -25,7 +25,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
 (function ProjectNotes(thisObj) {
 
   // Globals
-  var scriptVersion = "0.8";
+  var scriptVersion = "0.9";
   var pal;
 
   #include "ProjectNotes_icons.jsxinc";
