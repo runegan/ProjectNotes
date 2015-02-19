@@ -10,7 +10,7 @@ Features
 
 How to install
 --------------
-1. Go to [/Releases](https://github.com/runegan/ProjectNotes/releases) and download the latest release.
+1. Go to [/Releases](https://github.com/runegan/ProjectNotes/releases) and download the latest version.
 2. Copy the .jsx file to the `Script UI Panels` folder. The location of the folder should be: 
   * PC: `C:\Program Files\Adobe\Adobe After Effects CC\Support Files\Scripts\ScriptUI Panels\`
   * Mac: `\Applications\Adobe After Effects CC\Scripts\ScriptUI Panels\`
