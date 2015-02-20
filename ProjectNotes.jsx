@@ -46,6 +46,8 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
           pal.header.spacing = 0;
 
           // Create buttons
+          pal.btn_expression = pal.header.add('iconbutton', [0,0,25,25], ProjectNotes_icons.btn_info, {style: 'toolbutton'});
+            pal.btn_expression.helpTip = "Apply text as expression to selected properties";
           pal.btn_createNew = pal.header.add('IconButton', [0,0,25,25], ProjectNotes_icons.btn_createNew, {style: 'toolbutton'});
             pal.btn_createNew.helpTip = "Create a new Note";
           pal.btn_save = pal.header.add('iconbutton', [0,0,25,25], ProjectNotes_icons.btn_saveFile, {style: 'toolbutton'});
@@ -94,6 +96,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
       pal.addEventListener('focus', onFirstActivate);
 
       // Event Handlers
+      pal.btn_expression.onClick = function () {projectNotes_applyExpression(pal)}
       pal.btn_createNew.onClick = function () {projectNotes_newNote()}
       pal.btn_save.onClick = function () {projectNotes_saveAsFile()}
       pal.btn_refresh.onClick = function () {projectNotes_getSaveComp(true)}
@@ -132,6 +135,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
           "under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/");
       }
 
+      projectNotes_applyExpression(pal);
       pal.noteArea.onChanging = function () {pal.saveLayer.property('Source Text').setValue(this.text)};
 
       pal.selectNote.onChange = function () {projectNotes_changeNote()}
@@ -322,6 +326,15 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
     }
   }
 
+  function projectNotes_applyExpression (pal) {
+    comp = app.project.activeItem;
+
+    for (var i = 0; i < comp.selectedProperties.length; i++) {
+      if (comp.selectedProperties[i].canSetExpression == true) {
+        comp.selectedProperties[i].expression = pal.noteArea.text;
+      }
+    }
+  }
 
   //Extra functions
   function projectNotes_saveNoteDialog (dialogText) {
