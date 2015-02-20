@@ -171,7 +171,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
       }
       //  Create Comp if none found
       if (! foundSaveComp ) {
-        pal.saveComp = app.project.items.addComp("ProjectNotes", 500,700,1,1,25);
+        pal.saveComp = app.project.items.addComp("ProjectNotes", 10,10,1,1,25);
       }
 
 
