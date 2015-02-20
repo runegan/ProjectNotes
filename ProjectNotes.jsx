@@ -135,7 +135,6 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
           "under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/");
       }
 
-      projectNotes_applyExpression(pal);
       pal.noteArea.onChanging = function () {pal.saveLayer.property('Source Text').setValue(this.text)};
 
       pal.selectNote.onChange = function () {projectNotes_changeNote()}
@@ -328,10 +327,11 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
 
   function projectNotes_applyExpression (pal) {
     comp = app.project.activeItem;
-
-    for (var i = 0; i < comp.selectedProperties.length; i++) {
-      if (comp.selectedProperties[i].canSetExpression == true) {
-        comp.selectedProperties[i].expression = pal.noteArea.text;
+    if (comp.selectedProperties != null) {
+      for (var i = 0; i < comp.selectedProperties.length; i++) {
+        if (comp.selectedProperties[i].canSetExpression == true) {
+          comp.selectedProperties[i].expression = pal.noteArea.text;
+        }
       }
     }
   }
