@@ -100,43 +100,8 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
       pal.btn_createNew.onClick = function () {projectNotes_newNote()}
       pal.btn_save.onClick = function () {projectNotes_saveAsFile()}
       pal.btn_refresh.onClick = function () {projectNotes_getSaveComp(true)}
-      pal.btn_info.onClick = function () {
-        alert("ProjectNotes \n" +
-          "Version " + scriptVersion +"\n" +
-          "Copyright (c) 2015  Rune Gangsø\n" +
-          "A panel for writing down notes or todos for the current project. "+
-          "The script will create a comp where the notes are stored.\n" +
-          "\n" +
-          "Features:\n" +
-          "- Multiple notes.\n" +
-          "- Exporting notes to disk.\n" +
-          "- Renaming and deleting notes.\n" +
-          "\n" +
-          "Have some feedback or a suggestion?\n" +
-          "Send an email to projectnotes@runegang.so\n" +
-          "or send \n" +
-          "\n" +
-          "\n" +
-          "Legal:\n" +
-          "ProjectNotes is free software: you can redistribute it and/or modify " +
-          "it under the terms of the GNU General Public License as published by " +
-          "the Free Software Foundation, either version 3 of the License, or " +
-          "(at your option) any later version.\n" +
-          "\n" +
-          "ProjectNotes is distributed in the hope that it will be useful, " +
-          "but WITHOUT ANY WARRANTY; without even the implied warranty of " +
-          "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " +
-          "GNU General Public License for more details.\n" +
-          "\n" +
-          "You should have received a copy of the GNU General Public License " +
-          "along with this program.  If not, see http://www.gnu.org/licenses/.\n" +
-          "\n" +
-          "Icons made by Freepik from http://www.flaticon.com is licensed " +
-          "under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/");
-      }
-
+      pal.btn_info.onClick = function () {projectNotes_info()}
       pal.noteArea.onChanging = function () {pal.saveLayer.property('Source Text').setValue(this.text)};
-
       pal.selectNote.onChange = function () {projectNotes_changeNote()}
       pal.btn_delete.onClick = function () {projectNotes_deleteNote()}
       pal.btn_rename.onClick = function () {projectNotes_renameNote()}
@@ -152,6 +117,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
     }
     return pal;
   }
+
 
 
   // Event Handler Functions
@@ -327,13 +293,52 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
 
   function projectNotes_applyExpression (pal) {
     comp = app.project.activeItem;
+    
     if (comp.selectedProperties != null) {
       for (var i = 0; i < comp.selectedProperties.length; i++) {
         if (comp.selectedProperties[i].canSetExpression == true) {
           comp.selectedProperties[i].expression = pal.noteArea.text;
         }
       }
+    }else{
+      alert("Error: No property \n"+
+        "You must have selected at least one property for this feature to work");
     }
+  }
+
+  function projectNotes_info () {
+    alert("ProjectNotes \n" +
+      "Version " + scriptVersion +"\n" +
+      "Copyright (c) 2015  Rune Gangsø\n" +
+      "A panel for writing down notes or todos for the current project. "+
+      "The script will create a comp where the notes are stored.\n" +
+      "\n" +
+      "Features:\n" +
+      "- Multiple notes.\n" +
+      "- Exporting notes to disk.\n" +
+      "- Renaming and deleting notes.\n" +
+      "\n" +
+      "Have some feedback or a suggestion?\n" +
+      "Send an email to projectnotes@runegang.so\n" +
+      "or send \n" +
+      "\n" +
+      "\n" +
+      "Legal:\n" +
+      "ProjectNotes is free software: you can redistribute it and/or modify " +
+      "it under the terms of the GNU General Public License as published by " +
+      "the Free Software Foundation, either version 3 of the License, or " +
+      "(at your option) any later version.\n" +
+      "\n" +
+      "ProjectNotes is distributed in the hope that it will be useful, " +
+      "but WITHOUT ANY WARRANTY; without even the implied warranty of " +
+      "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " +
+      "GNU General Public License for more details.\n" +
+      "\n" +
+      "You should have received a copy of the GNU General Public License " +
+      "along with this program.  If not, see http://www.gnu.org/licenses/.\n" +
+      "\n" +
+      "Icons made by Freepik from http://www.flaticon.com is licensed " +
+      "under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/");
   }
 
   //Extra functions
