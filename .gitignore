@@ -1,4 +1,4 @@
 *.jsxbin
 Releases/
-icons/*/
+icons/
 .DS_Store
