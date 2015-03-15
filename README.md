@@ -16,3 +16,9 @@ How to install
   * Mac: `\Applications\Adobe After Effects CC\Scripts\ScriptUI Panels\`
 3. Restart After Effects to complete the installation.
 4. The panel should now be accessible from the bottom of the 'Window' Menu.
+
+
+---
+
+Icons made by Freepik from <http://www.flaticon.com> is licensed
+under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
