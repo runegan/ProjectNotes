@@ -20,5 +20,4 @@ How to install
 
 ---
 
-Icons made by Freepik from <http://www.flaticon.com> is licensed
-under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
+Icons made by [Freepik](http://www.freepik.com) from [www.flaticon.com](http://www.flaticon.com) is licensed under [CC BY 3.0](http://creativecommons.org/licenses/by/3.0/)
