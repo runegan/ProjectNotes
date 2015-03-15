@@ -28,6 +28,17 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
   var scriptVersion = "0.9";
   var pal;
 
+  projectNotes = new Object();
+  projectNotes.notes = new Object();
+
+  function newNote (name, location) {
+    projectNotes.notes[name] = {
+      name : name,
+      saveTo : [location],
+      content : ""
+    }
+  }
+
   #include "ProjectNotes_icons.jsxinc";
 
   function projectNotes_buildUI(thisObj) {
@@ -85,7 +96,9 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
       pal.layout.resize();
       pal.onResizing = pal.onResize = function () {this.layout.resize(); }
 
+      // Get all notes;
       projectNotes_getSaveComp();
+      projectNotes_loadGlobalNotes();
 
       // Check for save comp when clicking in the window
       // Remove eventhandler so it only check the first time
@@ -96,7 +109,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
       pal.addEventListener('focus', onFirstActivate);
 
       // Event Handlers
-      pal.btn_expression.onClick = function () {projectNotes_applyExpression(pal)}
+      pal.btn_expression.onClick = function () {projectNotes_applyExpression()}
       pal.btn_createNew.onClick = function () {projectNotes_newNote()}
       pal.btn_save.onClick = function () {projectNotes_saveAsFile()}
       pal.btn_refresh.onClick = function () {projectNotes_getSaveComp(true)}
@@ -117,8 +130,6 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
     }
     return pal;
   }
-
-
 
   // Event Handler Functions
   function projectNotes_getSaveComp (createComp) {
@@ -154,6 +165,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
         for (i = 1; i <= pal.saveComp.numLayers; i++) {
           if (pal.saveComp.layer(i) instanceof TextLayer) {
             pal.selectNote.add('item', pal.saveComp.layer(i).name);
+            newNote(pal.saveComp.layer(i).name, 'local');
             foundSaveLayer = true;
           }
         }
@@ -177,6 +189,20 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
         pal.saveLayer = pal.saveComp.layers.addText();
         pal.saveLayer.name = "ProjectNotes save";
         pal.selectNote.add('item', pal.saveLayer.name);
+        newNote(pal.saveLayer.name, 'local');
+      }
+    }
+  }
+
+  function projectNotes_loadGlobalNotes (pal) {
+    if (app.settings.haveSetting('ProjectNotes', 'Global_Notes')) {
+      global_Notes = app.settings.getSetting('ProjectNotes', 'Global_Notes');
+      if (global_Notes.length != 0) {
+        pal.selectNote.add('separator', undefined);
+        for (note in global_Notes) {
+          pal.selectNote.add('item', note);
+          newNote(pal.saveLayer.name, 'global');
+        }
       }
     }
   }
@@ -213,7 +239,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
   function projectNotes_renameNote(oldName, newName) {
     // Set default values
     if (typeof oldName === 'undefined') oldName = pal.selectNote.selection.text;
-    if (typeof newName === 'undefined') newName = projectNotes_saveNoteDialog('Rename "'+oldName+'" to');
+    if (typeof newName === 'undefined') newName = projectNotes_saveNoteDialog('Rename "'+oldName+'" to', oldName);
 
     // rename in dropdown and comp based on index of layer in comp
     if (newName != false) {
@@ -230,7 +256,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
 
     // If only one note: change name of the first layer of the save comp.
     if (selectNote.items.length === 1) {
-      var saveAs = projectNotes_saveNoteDialog("Save current Note as:");
+      var saveAs = projectNotes_saveNoteDialog("Save current Note as:", 'Untitled');
 
       if (saveAs != false) {
         projectNotes_renameNote(1, saveAs);
@@ -240,7 +266,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
     }
 
     if (!canceled) {
-      var saveAs = projectNotes_saveNoteDialog("Save new Note as:");
+      var saveAs = projectNotes_saveNoteDialog("Save new Note as:", pal.saveLayer.name);
 
       if (saveAs != false) {
         // Add text comp
@@ -291,16 +317,16 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
     }
   }
 
-  function projectNotes_applyExpression (pal) {
+  function projectNotes_applyExpression () {
     comp = app.project.activeItem;
-    
-    if (comp.selectedProperties != null) {
+    if (comp.selectedProperties.length > 0) {
       for (var i = 0; i < comp.selectedProperties.length; i++) {
         if (comp.selectedProperties[i].canSetExpression == true) {
           comp.selectedProperties[i].expression = pal.noteArea.text;
         }
       }
-    }else{
+    }
+    else {
       alert("Error: No property \n"+
         "You must have selected at least one property for this feature to work");
     }
@@ -342,29 +368,33 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
   }
 
   //Extra functions
-  function projectNotes_saveNoteDialog (dialogText) {
+  function projectNotes_saveNoteDialog (dialogText, noteName) {
     // Set default text
     if (typeof dialogText === 'undefined') { dialogText = "Save new Note as:"; }
 
     var savePal = new Window('dialog', 'Save Note')
 
-    var res =
-    "group { \
-      orientation: 'column', \
-      alignment: 'left', \
-      alignChildren: 'left', \
-      st: StaticText {text:'"+ dialogText +":'}, \
-      saveAs: EditText {text:'', characters: 30}, \
-      buttons: Group { \
-        orientation: 'row', \
-        alignment: ['center', 'fill'], \
-        cancel: Button {text: 'Cancel', properties: {name: 'Cancel'}}, \
-        ok: Button {text: 'OK', enabled: false, properties: {name: 'OK'}} \
-      } \
-    }";
+    savePal.grp = savePal.add('group');
+      savePal.grp.orientation = 'column';
+      savePal.grp.alignment = 'left';
+      savePal.grp.alignChildren = 'left';
 
-    savePal.grp = savePal.add(res)
+      savePal.grp.add('statictext', undefined, dialogText+':');
+      var saveAs = savePal.grp.add('edittext', undefined, noteName);
+        saveAs.active = true;
+      var location = savePal.grp.add('checkbox', undefined, 'Global Note');
+      location.value = projectNotes.notes[noteName].global;
+      savePal.buttons = savePal.grp.add('group');
+        savePal.buttons.orientation = 'row';
+        savePal.buttons.alignment = ['center', 'fill'];
 
+        savePal.buttons.cancel = savePal.buttons.add('button', undefined, 'Cancel', {name: 'Cancel'});
+        savePal.buttons.ok = savePal.buttons.add('button', undefined, 'OK', {name: 'OK'});
+
+        if (saveAs.text.length == 0) {
+          savePal.buttons.ok.enbaled = false;          
+        }
+  
     savePal.grp.saveAs.onChanging = function() {
       // Enable OK button if not empty
       if (this.text.length == 0){
@@ -376,19 +406,22 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
 
     savePal.grp.buttons.cancel.onClick = function() {
       // The function will return false to check if the function was canceled
-      saveAsText = false;
+      newNoteName = false;
       savePal.close();
     }
 
     savePal.grp.buttons.ok.onClick = function() {
-      saveAsText = savePal.grp.saveAs.text;
+      newNoteName = savePal.grp.saveAs.text;
 
-      // Check if a note has the same name as the input name
+      // Check if a note name is already used
       var duplicate = false;
-      for (i = 0; i <= pal.selectNote.items.length; i++) {
-        if (pal.selectNote.items[i].text === saveAsText) {
-          duplicate = true;
-          break;
+      
+      if (newNoteName != noteName) {
+        for (i = 0; i <= pal.selectNote.items.length; i++) {
+          if (pal.selectNote.items[i].text === newNoteName) {
+            duplicate = true;
+            break;
+          }
         }
       }
 
@@ -400,7 +433,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
     }
 
     savePal.show();
-    return saveAsText;
+    return newNoteName;
   }
 
   function projectNotes_multiNotes (TrueFalse) {
