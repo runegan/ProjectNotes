@@ -25,7 +25,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
 (function ProjectNotes(thisObj) {
 
   // Globals
-  var scriptVersion = "0.10";
+  var scriptVersion = "0.10.1";
   var pal;
 
   ProjectNotes_icons = {
@@ -373,6 +373,8 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
     }";
 
     savePal.grp = savePal.add(res)
+
+    savePal.grp.saveAs.active = true;
 
     savePal.grp.saveAs.onChanging = function() {
       // Enable OK button if not empty
