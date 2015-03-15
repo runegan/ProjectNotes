@@ -46,7 +46,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
           pal.header.spacing = 0;
 
           // Create buttons
-          pal.btn_expression = pal.header.add('iconbutton', [0,0,25,25], ProjectNotes_icons.btn_info, {style: 'toolbutton'});
+          pal.btn_expression = pal.header.add('iconbutton', [0,0,25,25], ProjectNotes_icons.btn_expression, {style: 'toolbutton'});
             pal.btn_expression.helpTip = "Apply text as expression to selected properties";
           pal.btn_createNew = pal.header.add('IconButton', [0,0,25,25], ProjectNotes_icons.btn_createNew, {style: 'toolbutton'});
             pal.btn_createNew.helpTip = "Create a new Note";
