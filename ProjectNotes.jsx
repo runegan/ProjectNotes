@@ -98,11 +98,12 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
 
       // Check for save comp when clicking in the window
       // Remove eventhandler so it only check the first time
-      function onFirstActivate() {
-        projectNotes_getSaveComp(true);
-        pal.removeEventListener('focus', onFirstActivate);
-      }
-      pal.addEventListener('focus', onFirstActivate);
+      // function onFirstActivate() {
+      //   projectNotes_getSaveComp(true);
+      //   pal.removeEventListener('focus', onFirstActivate);
+      // }
+      // pal.addEventListener('focus', onFirstActivate);
+      pal.onActivate = function() {};
 
       // Event Handlers
       pal.btn_expression.onClick = function () {projectNotes_applyExpression(pal)}
@@ -110,7 +111,7 @@ under CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
       pal.btn_save.onClick = function () {projectNotes_saveAsFile()}
       pal.btn_refresh.onClick = function () {projectNotes_getSaveComp(true)}
       pal.btn_info.onClick = function () {projectNotes_info()}
-      pal.noteArea.onChanging = function () {pal.saveLayer.property('Source Text').setValue(this.text)};
+      pal.noteArea.onChange = function () {pal.saveLayer.property('Source Text').setValue(this.text)};
       pal.selectNote.onChange = function () {projectNotes_changeNote()}
       pal.btn_delete.onClick = function () {projectNotes_deleteNote()}
       pal.btn_rename.onClick = function () {projectNotes_renameNote()}
